@@ -21,7 +21,7 @@ app.get('/', (req, res) => {
 // Get all movies
 app.get('/movies', async (req, res) => {
     try {
-        const result = await pool.query('SELECT * FROM movies');
+        const result = await pool.query('SELECT * FROM myvies_movies');
         res.json(result.rows);
     } catch (err) {
         console.error(err);
@@ -32,7 +32,7 @@ app.get('/movies', async (req, res) => {
 // Get specific movie
 app.get('/movies/unwatched', async (req, res) => {
     try {
-        const result = await pool.query('SELECT * FROM movies WHERE watched = false');
+        const result = await pool.query('SELECT * FROM myvies_movies WHERE watched = false');
         res.json(result.rows);
     } catch (err) {
         console.error(err);
@@ -43,7 +43,7 @@ app.get('/movies/unwatched', async (req, res) => {
 app.get('/movies/:id', async (req, res) => {
     const { id } = req.params;
     try {
-        const result = await pool.query('SELECT * FROM movies WHERE id = $1', [id]);
+        const result = await pool.query('SELECT * FROM myvies_movies WHERE id = $1', [id]);
         if (result.rows.length === 0) {
             return res.status(404).json({ error: 'Movie not found' });
         }
@@ -58,7 +58,7 @@ app.post('/movies', async (req, res) => {
     const { title, genre } = req.body;
     try {
         const result = await pool.query(
-            'INSERT INTO movies (title, genre) VALUES ($1, $2) RETURNING *',
+            'INSERT INTO myvies_movies (title, genre) VALUES ($1, $2) RETURNING *',
             [title, genre]
         );
         res.status(201).json(result.rows[0]);
@@ -73,7 +73,7 @@ app.patch('/movies/:id', async (req, res) => {
     const { title, genre, watched } = req.body;
     try {
         const result = await pool.query(
-            'UPDATE movies SET title = $1, genre = $2, watched = $3 WHERE id = $4 RETURNING *',
+            'UPDATE myvies_movies SET title = $1, genre = $2, watched = $3 WHERE id = $4 RETURNING *',
             [title, genre, watched, id]
         );
         if (result.rows.length === 0) {
@@ -89,7 +89,7 @@ app.patch('/movies/:id', async (req, res) => {
 app.delete('/movies/:id', async (req, res) => {
     const { id } = req.params;
     try {
-        const result = await pool.query('DELETE FROM movies WHERE id = $1 RETURNING *', [id]);
+        const result = await pool.query('DELETE FROM myvies_movies WHERE id = $1 RETURNING *', [id]);
         if (result.rows.length === 0) {
             return res.status(404).json({ error: 'Movie not found' });
         }
